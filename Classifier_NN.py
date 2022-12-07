@@ -13,7 +13,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from customDataset import CatsandDogs
 
-transform = transforms.Compose(
+transform= transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
@@ -23,7 +23,11 @@ batch_size = 4
 
 num_classes = 4
 
-dataset = CatsandDogs(csv_file = './data/CatsandDogs/CatsandDogs.csv', root_dir)
+dataset = CatsandDogs(csv_file = './data/CatsandDogs/CatsandDogs.csv', root_dir = './data/CatsandDogs/train/resized', transform=transform)
+
+trainset, testset = torch.utils.data.random_split(dataset, [1899, 100])
+trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
+testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
 
 '''
@@ -67,8 +71,8 @@ class Net(nn.Module):
         super().__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)
+        self.conv2 = nn.Conv2d(6, 50, 5)
+        self.fc1 = nn.Linear(150 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, num_classes)
 
