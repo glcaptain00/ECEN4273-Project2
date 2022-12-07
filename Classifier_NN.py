@@ -13,19 +13,24 @@ import numpy as np
 from torch.utils.data import DataLoader
 from customDataset import CatsandDogs
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 transform= transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 num_workers = 0
 
-batch_size = 4
+batch_size = 50
+
+epoch_nums = 30
 
 num_classes = 4
 
 dataset = CatsandDogs(csv_file = './data/CatsandDogs/CatsandDogs.csv', root_dir = './data/CatsandDogs/train/resized', transform=transform)
 
-trainset, testset = torch.utils.data.random_split(dataset, [1899, 100])
+trainset, testset = torch.utils.data.random_split(dataset, [999, 1000])
 trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
 testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
@@ -43,7 +48,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
 '''
 
 
-classes = ('pikachu', 'person', 'drone', 'cat', 'dog')
+classes = ('cat', 'dog', 'pikachu', 'person', 'drone' )
 
 def imshow(img):
     img = img / 2 + 0.5     # unnormalize
@@ -69,10 +74,10 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.conv1 = nn.Conv2d(3, 16, 16)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 50, 5)
-        self.fc1 = nn.Linear(150 * 5 * 5, 120)
+        self.conv2 = nn.Conv2d(16, 64 , 6)
+        self.fc1 = nn.Linear(81 * 16*16, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, num_classes)
 
@@ -95,9 +100,10 @@ optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
 
 
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(epoch_nums):  # loop over the dataset multiple times
 
     running_loss = 0.0
+    loss = 0
     for i, data in enumerate(trainloader, 0):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
@@ -113,9 +119,11 @@ for epoch in range(2):  # loop over the dataset multiple times
 
         # print statistics
         running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-            running_loss = 0.0
+       
+    print('Epoch: {} \tTraining Loss: {:.6f}'.format(
+        epoch+1,
+        loss
+        ))
 
 print('Finished Training')
 
@@ -129,7 +137,7 @@ images, labels = next(dataiter)
 
 # print images
 imshow(torchvision.utils.make_grid(images))
-print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
+print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
     
 
 
@@ -141,7 +149,7 @@ outputs = net(images)
 _, predicted = torch.max(outputs, 1)
 
 print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
-                              for j in range(4)))
+                              for j in range(batch_size)))
 
 
 correct = 0
@@ -157,7 +165,7 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
+print(f'Accuracy of the network on the 2000 test images: {100 * correct // total} %')
 
 
 

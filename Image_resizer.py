@@ -2,6 +2,8 @@
 """
 Created on Wed Dec  7 14:43:33 2022
 
+source:https://medium.com/@basit.javed.awan/resizing-multiple-images-and-saving-them-using-opencv-518f385c28d3
+
 @author: redst
 """
 
