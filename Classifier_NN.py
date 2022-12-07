@@ -10,8 +10,7 @@ import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
-import torch.nn as nn
-import torch.nn.functional as F
+from torch.utils.data import DataLoader
 
 
 transform = transforms.Compose(
@@ -20,11 +19,15 @@ transform = transforms.Compose(
 
 batch_size = 4
 
-trainloader = DataLoader(trainset, batch_size=batch_size,
-                                          shuffle=True, num_workers=0)
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+                                        download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+                                          shuffle=True, num_workers=2)
 
-testloader = DataLoader(testset, batch_size=batch_size,
-                                         shuffle=False, num_workers=0)
+testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                       download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+                                         shuffle=False, num_workers=2)
 
 classes = ('pikachu', 'person', 'drone', 'cat')
 
@@ -43,6 +46,12 @@ imshow(torchvision.utils.make_grid(images))
 # print labels
 print(' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
 
+
+"""
+import torch.nn as nn
+import torch.nn.functional as F
+
+
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
@@ -51,7 +60,7 @@ class Net(nn.Module):
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 4)
+        self.fc3 = nn.Linear(84, 10)
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
@@ -61,7 +70,6 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
-
-
-net = Net()
-
+    
+  """  
+    
