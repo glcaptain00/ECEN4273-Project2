@@ -6,6 +6,7 @@ import torchvision
 import torchvision.transforms as transforms
 import Classifier_NN as mynn
 import torchvision.io as io
+import matplotlib.pyplot as plt
 
 # Configurables
 # No configurables yet
@@ -57,6 +58,8 @@ elif (sourceType == "-img" or videoSource == "-image"):
     im = io.read_image(videoSource)
     res = detectObjects(im)
     print(f"RES: {res}")
+    plt.imshow(im.permute(1, 2, 0))
+    plt.show()
     #cv.imshow("Frame", im)
     #cv.waitKey(0)
 
