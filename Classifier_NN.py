@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
 from customDataset import CatsandDogs
+import torch.optim as optim
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -91,46 +92,93 @@ class Net(nn.Module):
         return x
     
     
-net = Net()
     
-import torch.optim as optim
-
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-
+    def trainNet(self):
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
 
 
-for epoch in range(epoch_nums):  # loop over the dataset multiple times
+        for epoch in range(epoch_nums):  # loop over the dataset multiple times
 
-    running_loss = 0.0
-    loss = 0
-    for i, data in enumerate(trainloader, 0):
-        # get the inputs; data is a list of [inputs, labels]
-        inputs, labels = data
+            running_loss = 0.0
+            loss = 0
+            for i, data in enumerate(trainloader, 0):
+                # get the inputs; data is a list of [inputs, labels]
+                inputs, labels = data
 
-        # zero the parameter gradients
-        optimizer.zero_grad()
+                # zero the parameter gradients
+                optimizer.zero_grad()
 
-        # forward + backward + optimize
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
+                # forward + backward + optimize
+                outputs = self(inputs)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
 
-        # print statistics
-        running_loss += loss.item()
-       
-    print('Epoch: {} \tTraining Loss: {:.6f}'.format(
-        epoch+1,
-        loss
-        ))
+                # print statistics
+                running_loss += loss.item()
+            
+            print('Epoch: {} \tTraining Loss: {:.6f}'.format(
+                epoch+1,
+                loss
+                ))
 
-print('Finished Training')
+        print('Finished Training')
+
+    def saveNet(self, path):
+        torch.save(self.state_dict(), path)
+
+    def loadNet(self, path):
+        self.load_state_dict(torch.load(path))
+
+    def verifyTraining(self):
+        correct = 0
+        total = 0
+        # since we're not training, we don't need to calculate the gradients for our outputs
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                # calculate outputs by running images through the network
+                outputs = net(images)
+                # the class with the highest energy is what we choose as prediction
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+
+        print(f'Accuracy of the network on the 2000 test images: {100 * correct // total} %')
+
+        # prepare to count predictions for each class
+        correct_pred = {classname: 0 for classname in classes}
+        total_pred = {classname: 0 for classname in classes}
+
+        # again no gradients needed
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                outputs = net(images)
+                _, predictions = torch.max(outputs, 1)
+                # collect the correct predictions for each class
+                for label, prediction in zip(labels, predictions):
+                    if label == prediction:
+                        correct_pred[classes[label]] += 1
+                    total_pred[classes[label]] += 1
 
 
-PATH = './cifar_net.pth'
-torch.save(net.state_dict(), PATH)
+        # print accuracy for each class
+        for classname, correct_count in correct_pred.items():
+            accuracy = 100 * float(correct_count) / total_pred[classname]
+            print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
+        
+    def getLabels(self, img):
+        print("Needs implemented")
 
+
+net = Net()
+
+save_path = './cifar_net.pth'
+
+
+'''
 
 dataiter = iter(testloader)
 images, labels = next(dataiter)
@@ -138,11 +186,8 @@ images, labels = next(dataiter)
 # print images
 imshow(torchvision.utils.make_grid(images))
 print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
+'''
     
-
-
-net = Net()
-net.load_state_dict(torch.load(PATH))
 
 outputs = net(images)
 
@@ -152,41 +197,3 @@ print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
                               for j in range(batch_size)))
 
 
-correct = 0
-total = 0
-# since we're not training, we don't need to calculate the gradients for our outputs
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data
-        # calculate outputs by running images through the network
-        outputs = net(images)
-        # the class with the highest energy is what we choose as prediction
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
-
-print(f'Accuracy of the network on the 2000 test images: {100 * correct // total} %')
-
-
-
-# prepare to count predictions for each class
-correct_pred = {classname: 0 for classname in classes}
-total_pred = {classname: 0 for classname in classes}
-
-# again no gradients needed
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data
-        outputs = net(images)
-        _, predictions = torch.max(outputs, 1)
-        # collect the correct predictions for each class
-        for label, prediction in zip(labels, predictions):
-            if label == prediction:
-                correct_pred[classes[label]] += 1
-            total_pred[classes[label]] += 1
-
-
-# print accuracy for each class
-for classname, correct_count in correct_pred.items():
-    accuracy = 100 * float(correct_count) / total_pred[classname]
-    print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
