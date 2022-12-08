@@ -21,6 +21,10 @@ transform= transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
+
+transformTensor= transforms.Compose(
+    [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
 num_workers = 0
 
 batch_size = 60
@@ -170,8 +174,8 @@ class Net(nn.Module):
             print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         
     def getLabels(self, img):
-        img = img.unsqueeze(1)
-        self(img)
+        img = img.unsqueeze(0).float()
+        return self(img)
 
 
 

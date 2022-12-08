@@ -55,10 +55,10 @@ if (sourceType == "-live"):
     sys.exit()
 elif (sourceType == "-img" or videoSource == "-image"):
     im = io.read_image(videoSource)
-    _, res = detectObjects(im)
-    print(res)
-    cv.imshow("Frame", im)
-    cv.waitKey(0)
+    res = detectObjects(im)
+    print(f"RES: {res}")
+    #cv.imshow("Frame", im)
+    #cv.waitKey(0)
 
 elif (sourceType == "-video"):
 
