@@ -30,7 +30,7 @@ def splitFrames(video):
     return frames
 
 def detectObjects(nparray):
-    return mynn.net(torch.from_numpy(nparray))
+    return mynn.net.getLabels(torch.from_numpy(nparray))
 
 
 

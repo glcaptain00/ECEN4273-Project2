@@ -172,7 +172,7 @@ class Net(nn.Module):
             print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         
     def getLabels(self, img):
-        print("Needs implemented")
+        self(transform(img))
 
 
 
