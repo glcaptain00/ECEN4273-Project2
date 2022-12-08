@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
-from customDataset import CatsandDogs
+from customDataset import customData
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -22,15 +22,15 @@ transform= transforms.Compose(
 
 num_workers = 0
 
-batch_size = 50
+batch_size = 60
 
-epoch_nums = 30
+epoch_nums = 40
 
 num_classes = 4
 
-dataset = CatsandDogs(csv_file = './data/CatsandDogs/CatsandDogs.csv', root_dir = './data/CatsandDogs/train/resized', transform=transform)
+dataset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
 
-trainset, testset = torch.utils.data.random_split(dataset, [999, 1000])
+trainset, testset = torch.utils.data.random_split(dataset, [999, 1281])
 trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
 testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
@@ -74,10 +74,10 @@ import torch.nn.functional as F
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 16, 16)
+        self.conv1 = nn.Conv2d(3, 10, 12)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(16, 64 , 6)
-        self.fc1 = nn.Linear(81 * 16*16, 120)
+        self.conv2 = nn.Conv2d(10, 100 , 6)
+        self.fc1 = nn.Linear(100 * 19 * 19, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, num_classes)
 

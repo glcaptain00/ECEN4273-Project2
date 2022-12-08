@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import Dataset
 from skimage import io
 
-class CatsandDogs(Dataset):
+class customData(Dataset):
     def __init__(self, csv_file, root_dir, transform):
         self.annotations = pd.read_csv(csv_file)
         self.root_dir = root_dir
