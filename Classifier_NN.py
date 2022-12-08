@@ -32,8 +32,8 @@ num_classes = 4
 dataset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
 print(dataset.__len__())
 
-
-trainset, testset = torch.utils.data.random_split(dataset, [199, 981])
+trainset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
+testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/resized', transform=transform)
 trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
 testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
@@ -189,7 +189,13 @@ images, labels = next(dataiter)
 imshow(torchvision.utils.make_grid(images))
 print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
 '''
-    
+
+net = Net()
+net.trainNet()
+net.saveNet(save_path)
+
+net.loadNet(save_path)
+net.verifyTraining()
 
 outputs = net(images)
 
