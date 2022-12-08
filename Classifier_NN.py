@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
 from torch.utils.data import DataLoader
-from customDataset import CatsandDogs
+from customDataset import customData
 import torch.optim as optim
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,8 +30,10 @@ epoch_nums = 40
 num_classes = 4
 
 dataset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
+print(dataset.__len__())
 
-trainset, testset = torch.utils.data.random_split(dataset, [999, 1281])
+
+trainset, testset = torch.utils.data.random_split(dataset, [199, 981])
 trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
 testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
@@ -139,7 +141,7 @@ class Net(nn.Module):
             for data in testloader:
                 images, labels = data
                 # calculate outputs by running images through the network
-                outputs = net(images)
+                outputs = self(images)
                 # the class with the highest energy is what we choose as prediction
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
@@ -155,7 +157,7 @@ class Net(nn.Module):
         with torch.no_grad():
             for data in testloader:
                 images, labels = data
-                outputs = net(images)
+                outputs = self(images)
                 _, predictions = torch.max(outputs, 1)
                 # collect the correct predictions for each class
                 for label, prediction in zip(labels, predictions):
@@ -173,7 +175,7 @@ class Net(nn.Module):
         print("Needs implemented")
 
 
-net = Net()
+
 
 save_path = './cifar_net.pth'
 
