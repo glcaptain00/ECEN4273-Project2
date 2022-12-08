@@ -175,7 +175,9 @@ class Net(nn.Module):
         
     def getLabels(self, img):
         img = img.unsqueeze(0).float()
-        return self(img)
+        res = torch.max(self(img), 1)
+        res = res.indices[0].item()
+        return classes[res]
 
 
 
