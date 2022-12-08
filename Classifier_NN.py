@@ -29,13 +29,13 @@ epoch_nums = 40
 
 num_classes = 4
 
-dataset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
-print(dataset.__len__())
+#dataset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
+#print(dataset.__len__())
 
-trainset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
-testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/resized', transform=transform)
-trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
-testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
+#trainset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
+#testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/resized', transform=transform)
+#trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
+#testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
 
 '''
@@ -60,8 +60,8 @@ def imshow(img):
     plt.show()
     
     
-dataiter = iter(trainloader)
-images, labels = next(dataiter)
+#dataiter = iter(trainloader)
+#images, labels = next(dataiter)
 
 # show images
 #imshow(torchvision.utils.make_grid(images))
@@ -92,9 +92,7 @@ class Net(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
-    
-    
-    
+        
     def trainNet(self):
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
@@ -172,7 +170,8 @@ class Net(nn.Module):
             print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         
     def getLabels(self, img):
-        self(transform(img))
+        img = img.unsqueeze(1)
+        self(img)
 
 
 

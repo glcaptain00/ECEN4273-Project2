@@ -5,6 +5,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 import Classifier_NN as mynn
+import torchvision.io as io
 
 # Configurables
 # No configurables yet
@@ -30,7 +31,7 @@ def splitFrames(video):
     return frames
 
 def detectObjects(nparray):
-    return mynn.net.getLabels(torch.from_numpy(nparray))
+    return mynn.net.getLabels(nparray)
 
 
 
@@ -53,7 +54,7 @@ if (sourceType == "-live"):
     print("Live not yet implemented")
     sys.exit()
 elif (sourceType == "-img" or videoSource == "-image"):
-    im = cv.imread(videoSource)
+    im = io.read_image(videoSource)
     _, res = detectObjects(im)
     print(res)
     cv.imshow("Frame", im)
