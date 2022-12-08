@@ -1,7 +1,10 @@
 import sys          #For reading Command Line arguments
 import cv2 as cv    #For opening and processing images and videos
 import traceback    #For printing excpetion trace
-
+import torch
+import torchvision
+import torchvision.transforms as transforms
+import Classifier_NN as mynn
 
 # Configurables
 # No configurables yet
@@ -26,6 +29,9 @@ def splitFrames(video):
     
     return frames
 
+def detectObjects(nparray):
+    return mynn.net(torch.from_numpy(nparray))
+
 
 
 
@@ -48,10 +54,9 @@ if (sourceType == "-live"):
     sys.exit()
 elif (sourceType == "-img" or videoSource == "-image"):
     im = cv.imread(videoSource)
-
-    newIm = cv.pyrDown(im)
-    ret, newIm = cv.threshold(cv.cvtColor(newIm, cv.COLOR_BGR2GRAY), 64, 255, cv.THRESH_BINARY)
-    cv.imshow("Frame", newIm)
+    _, res = detectObjects(im)
+    print(res)
+    cv.imshow("Frame", im)
     cv.waitKey(0)
 
 elif (sourceType == "-video"):

@@ -64,9 +64,9 @@ dataiter = iter(trainloader)
 images, labels = next(dataiter)
 
 # show images
-imshow(torchvision.utils.make_grid(images))
+#imshow(torchvision.utils.make_grid(images))
 # print labels
-print(' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
+#print(' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
 
 
 
@@ -177,8 +177,10 @@ class Net(nn.Module):
 
 
 
-save_path = './cifar_net.pth'
 
+save_path = './cifar_net.pth'
+net = Net()
+net.loadNet(save_path)
 
 '''
 
@@ -189,13 +191,13 @@ images, labels = next(dataiter)
 imshow(torchvision.utils.make_grid(images))
 print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_size)))
 '''
-    
 
-outputs = net(images)
 
-_, predicted = torch.max(outputs, 1)
+#outputs = net(images)
 
-print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
-                              for j in range(batch_size)))
+#_, predicted = torch.max(outputs, 1)
+
+#print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
+                              #for j in range(batch_size)))
 
 
