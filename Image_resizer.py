@@ -11,16 +11,16 @@ import cv2
 import glob
 import os
 
-inputfolder = './data/TrainingSet/Pikachu'
+inputfolder = './data/TestingSet'
 folderLen = len(inputfolder)
 #os.mkdir('./data/TrainingSet/resized')
 
-i = 1
+i = 101
 
-for img in glob.glob(inputfolder + "/*"):
+for img in glob.glob(inputfolder + "/*.jpg"):
     image = cv2.imread(img)
     imgResized = cv2.resize(image, (100, 100))
-    cv2.imwrite("./data/TrainingSet/resized/pikachu.%04i.jpg" %i, imgResized)
+    cv2.imwrite("./data/TestingSet/resized/cat.%04i.jpg" %i, imgResized)
     i +=1
     cv2.imshow('image', imgResized)
     cv2.waitKey(30)

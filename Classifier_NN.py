@@ -27,7 +27,7 @@ transformTensor= transforms.Compose(
 
 num_workers = 0
 
-batch_size = 60
+batch_size = 1
 
 epoch_nums = 40
 
@@ -36,10 +36,10 @@ num_classes = 4
 #dataset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
 #print(dataset.__len__())
 
-#trainset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
-#testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/resized', transform=transform)
-#trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
-#testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
+trainset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
+testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/verify', transform=transform)
+trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
+testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
 
 
 '''
@@ -55,7 +55,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
 '''
 
 
-classes = ('cat', 'dog', 'pikachu', 'person', 'drone' )
+classes = ('cat', 'dog', 'pikachu', 'drone', 'person' )
 
 def imshow(img):
     img = img / 2 + 0.5     # unnormalize
@@ -169,9 +169,9 @@ class Net(nn.Module):
 
 
         # print accuracy for each class
-        for classname, correct_count in correct_pred.items():
-            accuracy = 100 * float(correct_count) / total_pred[classname]
-            print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
+        #for classname, correct_count in correct_pred.items():
+            #accuracy = 100 * float(correct_count) / total_pred[classname]
+            #print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         
     def getLabels(self, img):
         img = img.unsqueeze(0).float()
@@ -185,7 +185,7 @@ class Net(nn.Module):
 
 save_path = './cifar_net.pth'
 net = Net()
-net.loadNet(save_path)
+#net.loadNet(save_path)
 
 '''
 
@@ -204,12 +204,13 @@ print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(batch_
 #net.loadNet(save_path)
 #net.verifyTraining()
 
-#outputs = net(images)
+"""
+outputs = net(images)
 
-#_, predicted = torch.max(outputs, 1)
+_, predicted = torch.max(outputs, 1)
 
-#print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
-                              #for j in range(batch_size)))
-
+print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
+                              for j in range(batch_size)))
+"""
 
 
