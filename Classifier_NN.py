@@ -79,7 +79,11 @@ import torch.nn.functional as F
 
 
 class Net(nn.Module):
+    '''Class to represent a Neural Network in the code'''
     def __init__(self):
+        """Initialized for the Net class.
+        Takes no arguments, setups the network automatically.
+        """
         super().__init__()
         self.conv1 = nn.Conv2d(3, 10, 12)
         self.pool = nn.MaxPool2d(2, 2)
@@ -89,6 +93,7 @@ class Net(nn.Module):
         self.fc3 = nn.Linear(84, num_classes)
 
     def forward(self, x):
+        '''Perform a forward operation'''
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1) # flatten all dimensions except batch
@@ -98,6 +103,7 @@ class Net(nn.Module):
         return x
         
     def trainNet(self):
+        '''Train the neural Network'''
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
 
@@ -130,12 +136,21 @@ class Net(nn.Module):
         print('Finished Training')
 
     def saveNet(self, path):
+        '''Save the current neural network
+
+            Parameters:
+            path (string): The path to save the net to'''
         torch.save(self.state_dict(), path)
 
     def loadNet(self, path):
+        '''Load a neural network from a file
+
+            Parameters:
+            path (string): The path to load the net from'''
         self.load_state_dict(torch.load(path))
 
     def verifyTraining(self):
+        '''Function to verify the model on validation dataset.'''
         correct = 0
         total = 0
         # since we're not training, we don't need to calculate the gradients for our outputs
@@ -174,6 +189,9 @@ class Net(nn.Module):
             #print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         
     def getLabels(self, img):
+        '''Get the labels of an image
+        
+            img (nparray): Image to get label of'''
         img = img.unsqueeze(0).float()
         res = torch.max(self(img), 1)
         res = res.indices[0].item()
