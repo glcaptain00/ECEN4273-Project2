@@ -3,3 +3,4 @@ Models/*
 data/*
 pikachu.csv
 *.jpg
+*.pyc
