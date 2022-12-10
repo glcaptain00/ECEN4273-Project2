@@ -7,6 +7,9 @@ import torchvision.transforms as transforms
 import Classifier_NN as mynn
 import torchvision.io as io
 import matplotlib.pyplot as plt
+from customDataset import customData
+from torch.utils.data import DataLoader
+from Classifier_NN import Net
 
 # Configurables
 # No configurables yet
@@ -36,10 +39,30 @@ def detectObjects(nparray):
 
 
 
+transform= transforms.Compose(
+    [transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 
+transformTensor= transforms.Compose(
+    [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
+num_workers = 0
 
+batch_size = 1
+
+epoch_nums = 40
+
+num_classes = 4
+
+testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/resized', transform=transform)
+testloader = DataLoader(dataset=testset, batch_size=batch_size, shuffle = False)
+
+save_path = './cifar_net.pth'
+net = Net()
+net.loadNet(save_path)
+
+net.verifyTraining(testloader)
 ########
 # Main #
 ########
@@ -50,6 +73,8 @@ if (len(sys.argv) < 3):
 
 sourceType = sys.argv[1]
 videoSource = sys.argv[2]
+
+
 
 if (sourceType == "-live"):
     print("Live not yet implemented")

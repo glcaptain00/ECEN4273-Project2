@@ -37,9 +37,9 @@ num_classes = 4
 #print(dataset.__len__())
 
 trainset = customData(csv_file = './data/TrainingSet/TrainingLabels.csv', root_dir = './data/TrainingSet/resized', transform=transform)
-testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/verify', transform=transform)
+testset = customData(csv_file = './data/TestingSet/TestingLabels.csv', root_dir = './data/TestingSet/resized', transform=transform)
 trainloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = True)
-testloader = DataLoader(dataset=trainset, batch_size=batch_size, shuffle = False)
+testloader = DataLoader(dataset=testset, batch_size=batch_size, shuffle = False)
 
 
 '''
@@ -135,7 +135,7 @@ class Net(nn.Module):
     def loadNet(self, path):
         self.load_state_dict(torch.load(path))
 
-    def verifyTraining(self):
+    def verifyTraining(self, testLoader):
         correct = 0
         total = 0
         # since we're not training, we don't need to calculate the gradients for our outputs
@@ -169,9 +169,9 @@ class Net(nn.Module):
 
 
         # print accuracy for each class
-        #for classname, correct_count in correct_pred.items():
-            #accuracy = 100 * float(correct_count) / total_pred[classname]
-            #print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
+        for classname, correct_count in correct_pred.items():
+            accuracy = 100 * float(correct_count) / total_pred[classname]
+            print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         
     def getLabels(self, img):
         img = img.unsqueeze(0).float()
